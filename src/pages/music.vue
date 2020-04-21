@@ -168,7 +168,7 @@ export default {
       'orderList',
       'currentIndex',
       'currentMusic',
-      'historyList'，
+      'historyList',
       "uid" //同步
     ])
   },
