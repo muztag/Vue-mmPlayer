@@ -32,7 +32,7 @@
         <p v-if="uid" v-text="'您当前的编号为:'"></p>
         <p v-if="uid" v-text="{ uid }"></p>
       </div>
-      <div slot="btn" @click="openDialog(1)">帮助</div>
+      <div slot="btn" @click="dest=2178530">O(∩_∩)O</div>
     </mm-dialog>
   </div>
 </template>
