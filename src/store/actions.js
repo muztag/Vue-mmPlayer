@@ -3,7 +3,9 @@ import {
   setHistoryList,
   removeHistoryList,
   setMode,
-  setUserId
+  setUserId,
+  setSyncStatus,
+  setSyncDest 
 } from '@/utils/storage'
 import * as types from './mutation-types'
 
@@ -89,3 +91,13 @@ export const setPlayMode = function({ commit }, mode) {
 export const setUid = function({ commit }, uid) {
   commit(types.SET_UID, setUserId(uid))
 }
+
+
+//设置同步编号
+export const setSync = function ({ commit }, sync) {
+  commit(types.SET_SYNC, setSyncStatus(sync));
+};
+// //设置同步目标地址
+// export const setSyncDest = function ({ commit }, dest) {
+//     commit(types.SET_SYNC_DEST, setSyncDest(dest));
+// };
