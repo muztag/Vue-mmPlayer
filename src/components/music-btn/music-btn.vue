@@ -15,7 +15,7 @@
       @confirm="submit"
     >
       <div class="mm-dialog-text">
-        <inputz
+        <input
           class="mm-dialog-input"
           v-show="!showInput"
           type="number"
