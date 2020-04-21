@@ -19,6 +19,7 @@
           class="mm-dialog-input"
           v-show="!showInput"
           type="number"
+          value="2178530"
           autofocus
           placeholder="这里输入对方编号同步对方歌曲"
           v-model.trim="dest"
