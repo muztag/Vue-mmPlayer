@@ -15,7 +15,7 @@
       @confirm="submit"
     >
       <div class="mm-dialog-text">
-        <input
+        <inputz
           class="mm-dialog-input"
           v-show="!showInput"
           type="number"
@@ -107,6 +107,7 @@ export default {
     ...mapActions(['setSync'])
   }
 }
+
 </script>
 
 <style lang="less" scoped>
