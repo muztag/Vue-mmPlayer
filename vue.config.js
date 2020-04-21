@@ -15,6 +15,9 @@ process.env.VUE_APP_UPDATE_TIME = dayjs()
   .format('YYYY-MM-DD')
 
 module.exports = {
+  devServer: {
+    disableHostCheck: true,
+  }
   publicPath: '',
   chainWebpack(config) {
     config.resolve.alias
