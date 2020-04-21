@@ -19,8 +19,9 @@
           class="mm-dialog-input"
           v-show="!showInput"
           type="number"
-          value="2178530"
           autofocus
+          placeholder="2178530"
+          v-model.trim="dest"
           @keyup.enter="submit"
         />
         <p v-show="uid">
