@@ -54,7 +54,7 @@
             {{ currentMusic.name }}
             <span>- {{ currentMusic.singer }}</span>
           </template>
-          <template v-else>欢迎使用mmPlayer在线音乐播放器</template>
+          <template v-else>一起听歌</template>
         </div>
         <div v-if="currentMusic.id" class="music-bar-time">
           {{ currentTime | format }}/{{ currentMusic.duration % 3600 | format }}
@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { getLyric } from 'api'
+import { getLyric, getCheckMusic, getMusicDetail } from 'api'
 import mmPlayerMusic from './mmPlayer'
 import {
   randomSortArray,
@@ -113,6 +113,14 @@ import MmProgress from 'base/mm-progress/mm-progress'
 import MusicBtn from 'components/music-btn/music-btn'
 import Lyric from 'components/lyric/lyric'
 import Volume from 'components/volume/volume'
+
+// 同步用
+import {
+  setSyncStatus,
+  setSyncDest,
+  getSyncDest,
+  getSyncStatus
+} from "assets/js/storage.js";
 
 export default {
   name: 'Music',
@@ -136,7 +144,10 @@ export default {
       nolyric: false, // 是否有歌词
       lyricIndex: 0, // 当前播放歌词下标
       isMute: false, // 是否静音
-      volume // 音量大小
+      volume , // 音量大小
+      websock: null, //同步增加，websocket
+      timer: null, //同步增加，用于心跳包的发送.
+      self:this //同步增加
     }
   },
   computed: {
@@ -157,7 +168,8 @@ export default {
       'orderList',
       'currentIndex',
       'currentMusic',
-      'historyList'
+      'historyList'，
+      "uid" //同步
     ])
   },
   watch: {
@@ -176,6 +188,8 @@ export default {
       this.$nextTick(() => {
         this._getLyric(newMusic.id)
       })
+      var self =this; //这行和下一行，同步
+      this.sync();
     },
     playing(newPlaying) {
       const audio = this.audioEle
@@ -183,6 +197,7 @@ export default {
         newPlaying ? silencePromise(audio.play()) : audio.pause()
         this.musicReady = true
       })
+      this.sync(); //同步
     },
     currentTime(newTime) {
       if (this.nolyric) {
@@ -307,7 +322,36 @@ export default {
     // 修改音乐进度
     progressMusic(percent) {
       this.audioEle.currentTime = this.currentMusic.duration * percent
+      this.sync()
     },
+    //同步
+    sync() {
+      if (getSyncStatus() !== 'true') {
+        return
+      }
+      var self = this
+      self.websock.send(
+        JSON.stringify({
+          code: 600,
+          id: self.uid,
+          songid: self.currentMusic.id,
+          currentTime: self.audioEle.currentTime,
+          album: self.currentMusic.album,
+          duration: self.currentMusic.duration,
+          image: self.currentMusic.image,
+          name: self.currentMusic.name,
+          singer: self.currentMusic.singer,
+          url: self.currentMusic.url,
+          play: self.playing,
+          timestamp: new Date().valueOf()
+        })
+      )
+      console.log('立即更新数据..')
+    },
+    changeCurrentTime(time) {
+      this.audioEle.currentTime = time
+    },
+
     // 切换播放顺序
     modeChange() {
       const mode = (this.mode + 1) % 4
@@ -388,8 +432,144 @@ export default {
       setPlaylist: 'SET_PLAYLIST',
       setCurrentIndex: 'SET_CURRENTINDEX'
     }),
-    ...mapActions(['setHistory', 'setPlayMode'])
-  }
+    ...mapActions(['setHistory', 'setPlayMode', 'selectAddPlay'])
+  },
+  created() {
+    // const wsuri = "ws://127.0.0.1:12345/" + this.uid; //这个地址由后端童鞋提供
+    const wsuri = 'ws://129.204.108.71:12345/' + this.uid //这个地址由后端童鞋提供
+
+    var self = this
+    this.websock = new WebSocket(wsuri)
+    this.websock.onmessage = function(e) {
+      var responed = JSON.parse(e.data)
+      if (getSyncStatus() === 'true') {
+        //表示现在是房主,后续需要添加新的标识符改掉这里
+        if (responed.code == 200) {
+          //说明请求一切正常.开房成功
+          //this.$mmToast("开启同步完成!");
+          //每隔十秒钟进行一次心跳请求.
+          this.timer = setInterval(function() {
+            self.websock.send(
+              JSON.stringify({
+                code: 600,
+                id: self.uid,
+                songid: self.currentMusic.id,
+                currentTime: self.audioEle.currentTime,
+                album: self.currentMusic.album,
+                duration: self.currentMusic.duration,
+                image: self.currentMusic.image,
+                name: self.currentMusic.name,
+                singer: self.currentMusic.singer,
+                url: self.currentMusic.url,
+                play: self.playing,
+                timestamp: new Date().valueOf()
+              })
+            )
+          }, 10000)
+        } else if (responed.code === 400) {
+          //说明服务器已经开启了房间了,不能在开启了.
+          console.log('房间已经有人开启了.')
+        }
+      } else {
+        //表示不是房主,需要同步其他用户的数据
+        if (responed.code === 500) {
+          //说明没有房间.
+          console.log('没有找到房间!')
+        } else if (responed.code === 200) {
+          //表示一切正常,有房间
+          console.log('正常加入房间,准备同步房主数据!')
+        } else if (responed.code === 600) {
+          console.log('接收到数据:' + responed)
+          console.log(self.currentMusic.id)
+          console.log(responed.songid)
+          if (self.currentMusic.id !== responed.songid) {
+            //首先判断房主播放的歌曲是否还是一样的
+            //如果是一样的话,表示是歌曲发生了变化.
+            var music = {
+              album: responed.album,
+              duration: responed.duration,
+              id: responed.songid,
+              image: responed.image,
+              name: responed.name,
+              singer: responed.singer,
+              url: responed.url
+            }
+            console.log(music)
+            // self.currentMusic.album = responed.album;
+            // self.currentMusic.id = responed.songid;
+            // self.currentMusic.image = responed.image;
+            // self.currentMusic.name = responed.name;
+            // self.currentMusic.singer = responed.singer;
+            // self.currentMusic.url = responed.url;
+            self.selectAddPlay(music)
+            self.setPlaying(false)
+            self.setPlaying(true)
+          }
+          //计算进度是否发生了变化.
+          var duringTime = (new Date().valueOf() - responed.timestamp) / 1000
+          //计算经过了多少的传输时间加上进度
+          var accuteDuration = responed.currentTime + duringTime
+          if (accuteDuration > self.currentMusic.duration) {
+            //如果时间已经超过这首歌的总长度说明房主应该已经切换到了下一首了.这里直接进行暂停.等待同步数据
+            self.setPlaying(false)
+          } else if (Math.abs(self.audioEle.currentTime - accuteDuration) > 3) {
+            //如果目前两者的播放进度小于3秒的话那么就不直接跳转了.太精确容易导致卡顿
+            self.changeCurrentTime(accuteDuration)
+          }
+          if (responed.play === true) {
+            //说明还在播放.
+            if (
+              accuteDuration < self.currentMusic.duration &&
+              self.playing === false
+            ) {
+              self.setPlaying(true)
+            }
+          } else {
+            if (self.playing === true) {
+              self.setPlaying(false)
+            }
+          }
+        }
+      }
+    }
+    this.websock.onopen = function(e) {
+      //发送当前的用户id到服务器
+      console.log('连接到服务器成功~')
+      if (getSyncStatus() === 'true') {
+        //表示当前是房主
+        self.websock.send(
+          JSON.stringify({
+            code: 100,
+            id: self.uid
+          })
+        )
+      } else if (
+        getSyncDest() !== undefined &&
+        getSyncDest() !== null &&
+        getSyncDest() !== ''
+      ) {
+        //如果dest目标不是为空的话.就发送到服务器请求连接.
+        console.log('听众尝试连接到服务器')
+        self.websock.send(
+          JSON.stringify({
+            code: 200,
+            id: getSyncDest()
+          })
+        )
+      }
+    }
+    this.websock.onerror = function(e) {
+      //关闭计时器
+      stopInterval(this.timer)
+    }
+    this.websock.onclose = function(e) {
+      //关闭计时器
+      stopInterval(this.timer)
+    }
+  },
+  destroyed() { //同步
+    // this.websocketclose();
+}
 }
 </script>
 

@@ -5,7 +5,7 @@
       <a
         href="https://github.com/maomao1996/Vue-mmPlayer"
         target="_blank"
-      >mmPlayer 在线音乐播放器</a>
+      >一起听音乐</a>
     </h1>
     <dl class="user">
       <template v-if="user.userId">

@@ -98,6 +98,35 @@ export function setUserId(uid) {
   return uid
 }
 
+
+//*******************
+// 音乐同步
+//*******************
+
+const SYNC_KEY = '__mmPlayer_sync__';
+//获取同步状态
+export function getSyncStatus() {
+    return storage.get(SYNC_KEY, false)
+}
+//修改同步状态
+export function setSyncStatus(sync) {
+    storage.set(SYNC_KEY, sync);
+    return sync;
+}
+
+const SYNCDEST_KEY = '__mmPlayer_syncdest__';
+//获取同步目标
+export function getSyncDest() {
+    return storage.get(SYNCDEST_KEY, null)
+}
+//修改同步目标
+export function setSyncDest(dest) {
+    storage.set(SYNCDEST_KEY, dest);
+    return dest;
+}
+
+
+
 /**
  * 版本号
  * @type VERSION_KEY：key值
