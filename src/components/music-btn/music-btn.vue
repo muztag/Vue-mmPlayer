@@ -20,7 +20,7 @@
           v-show="!showInput"
           type="number"
           autofocus
-          <!-- placeholder="这里输入对方编号同步对方歌曲" -->
+          placeholder="这里输入对方编号同步对方歌曲"
           value="2178530"
           v-model.trim="dest"
           @keyup.enter="submit"
