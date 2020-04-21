@@ -107,7 +107,6 @@ export default {
     ...mapActions(['setSync'])
   }
 }
-
 </script>
 
 <style lang="less" scoped>
