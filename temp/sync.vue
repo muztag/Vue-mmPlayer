@@ -73,7 +73,7 @@ import {
   setSyncDest,
   getSyncDest,
   getSyncStatus
-} from "assets/js/storage.js";
+} from "@/utils/storage.js";
 
 export default {
   name: "music",

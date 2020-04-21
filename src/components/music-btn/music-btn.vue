@@ -44,7 +44,7 @@ import {
   setSyncDest,
   getSyncDest,
   getSyncStatus
-} from "assets/js/storage.js";
+} from "@/utils/storage.js";
 import { mapGetters, mapActions } from "vuex";
 export default {
   name: "music-btn",
