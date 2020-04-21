@@ -19,7 +19,7 @@
           class="mm-dialog-input"
           v-show="!showInput"
           type="number"
-          value="2178530"
+          value=2178530
           autofocus
           v-model.trim="dest"
           @keyup.enter="submit"
