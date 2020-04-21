@@ -2,10 +2,7 @@
   <!--头部-->
   <header class="mm-header">
     <h1 class="header">
-      <a
-        href="https://github.com/maomao1996/Vue-mmPlayer"
-        target="_blank"
-      >一起听音乐</a>
+      <a>一起听音乐</a>
     </h1>
     <dl class="user">
       <template v-if="user.userId">
