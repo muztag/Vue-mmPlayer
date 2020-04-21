@@ -6,7 +6,7 @@
     <router-link to="/music/search" tag="span">搜索</router-link>
     <router-link class="none-414" to="/music/userlist" tag="span">我的歌单</router-link>
     <router-link to="/music/historylist" tag="span">我听过的</router-link>
-	<span class="music-btn" to="/music/sync" tag="span" @click="openDialog(0)">同步</span>
+    <span class="music-btn" to="/music/sync" tag="span" @click="openDialog(0)">同步</span>
     <mm-dialog
       ref="syncDialog"
       headText="音乐同步设置"
@@ -23,9 +23,9 @@
           placeholder="这里输入对方编号同步对方歌曲"
           v-model.trim="dest"
           @keyup.enter="submit"
-        >
+        />
         <p v-show="uid">
-          <input v-model="showInput" type="checkbox" name="openroom" value="openroom">开启房间
+          <input v-model="showInput" type="checkbox" name="openroom" value="openroom" />开启房间
         </p>
         <p v-if="uid">开启之后,对方输入您的的编号即可自动同步您的进度.</p>
         <p v-else>您必须先要登录才能开启房间,你现在只能同步其他人的房间.</p>
@@ -38,75 +38,76 @@
 </template>
 
 <script>
-import MmDialog from "base/mm-dialog/mm-dialog";
+import MmDialog from 'base/mm-dialog/mm-dialog'
 import {
   setSyncStatus,
   setSyncDest,
   getSyncDest,
   getSyncStatus
-} from "@/utils/storage.js";
-import { mapGetters, mapActions } from "vuex";
+} from '@/utils/storage.js'
+import { mapGetters, mapActions } from 'vuex'
 export default {
-  name: "music-btn",
+  name: 'music-btn',
   data() {
     return {
       user: this.uid,
       showInput: false,
-      dest: ""
-    };
+      dest: ''
+    }
   },
   components: {
     MmDialog
   },
   computed: {
-    ...mapGetters(["uid"])
+    ...mapGetters(['uid'])
   },
   methods: {
     created() {},
     openDialog(key) {
       switch (key) {
         case 0:
-          this.$refs.syncDialog.show();
-          var sync = getSyncStatus();
-          console.log("获取的状态为" + sync);
-          var dest = getSyncDest();
-          console.log(dest);
+          this.$refs.syncDialog.show()
+          var sync = getSyncStatus()
+          console.log('获取的状态为' + sync)
+          var dest = getSyncDest()
+          console.log(dest)
           if (sync === undefined) {
-            this.showInput = false;
+            this.showInput = false
           } else {
-            if (sync === "true") {
-              this.showInput = true;
+            if (sync === 'true') {
+              this.showInput = true
             } else {
-              this.showInput = false;
+              this.showInput = false
             }
           }
           if (dest === undefined) {
-            this.dest = "";
+            this.dest = ''
           } else {
-            this.dest = dest;
+            this.dest = dest
           }
-          break;
+          break
       }
     },
     submit() {
-      console.log("获取的内容:" + getSyncStatus());
+      console.log('获取的内容:' + getSyncStatus())
       //   console.log(this.uid);
       //   //用户进行提交
       //   console.log(this.dest)
-      console.log(this.showInput);
-      setSyncStatus(this.showInput);
-      setSyncDest(this.dest);
-      console.log(getSyncStatus());
-      this.$router.go(0);
+      console.log(this.showInput)
+      setSyncStatus(this.showInput)
+      setSyncDest(this.dest)
+      console.log(getSyncStatus())
+      this.$router.go(0)
     },
     updated() {
       if (this.uid != null) {
-        this.isLogin = true;
+        this.isLogin = true
       }
     },
-    ...mapActions(["setSync"])
+    ...mapActions(['setSync'])
   }
-};
+}
+
 </script>
 
 <style lang="less" scoped>

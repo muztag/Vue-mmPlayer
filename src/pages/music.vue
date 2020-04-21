@@ -6,47 +6,19 @@
         <keep-alive>
           <router-view v-if="$route.meta.keepAlive" class="music-list" />
         </keep-alive>
-        <router-view
-          v-if="!$route.meta.keepAlive"
-          :key="$route.path"
-          class="music-list"
-        />
+        <router-view v-if="!$route.meta.keepAlive" :key="$route.path" class="music-list" />
       </div>
-      <lyric
-        class="music-right"
-        :lyric="lyric"
-        :nolyric="nolyric"
-        :lyric-index="lyricIndex"
-      />
+      <lyric class="music-right" :lyric="lyric" :nolyric="nolyric" :lyric-index="lyricIndex" />
     </div>
 
     <!--播放器-->
-    <div
-      class="music-bar"
-      :class="{ disable: !musicReady || !currentMusic.id }"
-    >
+    <div class="music-bar" :class="{ disable: !musicReady || !currentMusic.id }">
       <div class="music-bar-btns">
-        <mm-icon
-          class="pointer"
-          type="prev"
-          :size="36"
-          title="上一曲 Ctrl + Left"
-          @click="prev"
-        />
-        <div
-          class="control-play pointer"
-          title="播放暂停 Ctrl + Space"
-          @click="play"
-        >
+        <mm-icon class="pointer" type="prev" :size="36" title="上一曲 Ctrl + Left" @click="prev" />
+        <div class="control-play pointer" title="播放暂停 Ctrl + Space" @click="play">
           <mm-icon :type="playing ? 'pause' : 'play'" :size="24" />
         </div>
-        <mm-icon
-          class="pointer"
-          type="next"
-          :size="36"
-          title="下一曲 Ctrl + Right"
-          @click="next"
-        />
+        <mm-icon class="pointer" type="next" :size="36" title="下一曲 Ctrl + Right" @click="next" />
       </div>
       <div class="music-music">
         <div class="music-bar-info">
@@ -56,9 +28,10 @@
           </template>
           <template v-else>一起听歌</template>
         </div>
-        <div v-if="currentMusic.id" class="music-bar-time">
-          {{ currentTime | format }}/{{ currentMusic.duration % 3600 | format }}
-        </div>
+        <div
+          v-if="currentMusic.id"
+          class="music-bar-time"
+        >{{ currentTime | format }}/{{ currentMusic.duration % 3600 | format }}</div>
         <mm-progress
           class="music-progress"
           :percent="percentMusic"
@@ -77,12 +50,7 @@
       />
 
       <!-- 评论 -->
-      <mm-icon
-        class="icon-color pointer comment"
-        type="comment"
-        :size="30"
-        @click="openComment"
-      />
+      <mm-icon class="icon-color pointer comment" type="comment" :size="30" @click="openComment" />
 
       <!-- 音量控制 -->
       <div class="music-bar-volume" title="音量加减 [Ctrl + Up / Down]">
@@ -120,7 +88,7 @@ import {
   setSyncDest,
   getSyncDest,
   getSyncStatus
-} from "@/utils/storage.js";
+} from '@/utils/storage.js'
 
 export default {
   name: 'Music',
@@ -144,10 +112,10 @@ export default {
       nolyric: false, // 是否有歌词
       lyricIndex: 0, // 当前播放歌词下标
       isMute: false, // 是否静音
-      volume , // 音量大小
+      volume, // 音量大小
       websock: null, //同步增加，websocket
       timer: null, //同步增加，用于心跳包的发送.
-      self:this //同步增加
+      self: this //同步增加
     }
   },
   computed: {
@@ -169,7 +137,7 @@ export default {
       'currentIndex',
       'currentMusic',
       'historyList',
-      "uid" //同步
+      'uid' //同步
     ])
   },
   watch: {
@@ -188,8 +156,8 @@ export default {
       this.$nextTick(() => {
         this._getLyric(newMusic.id)
       })
-      var self =this; //这行和下一行，同步
-      this.sync();
+      var self = this //这行和下一行，同步
+      this.sync()
     },
     playing(newPlaying) {
       const audio = this.audioEle
@@ -197,7 +165,7 @@ export default {
         newPlaying ? silencePromise(audio.play()) : audio.pause()
         this.musicReady = true
       })
-      this.sync(); //同步
+      this.sync() //同步
     },
     currentTime(newTime) {
       if (this.nolyric) {
@@ -567,9 +535,10 @@ export default {
       stopInterval(this.timer)
     }
   },
-  destroyed() { //同步
+  destroyed() {
+    //同步
     // this.websocketclose();
-}
+  }
 }
 </script>
 

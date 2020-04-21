@@ -7,12 +7,12 @@
         v-for="(item,index) in Artists.slice(0,5)"
         :key="index"
         @click="clickHot(item.first)"
-      >{{item.first}}</span>
+      >{{ item.first }}</span>
       <input
         class="search-input"
         type="text"
-        placeholder="请输入编号"
         v-model.trim="searchValue"
+        placeholder="请输入编号"
         @keyup.enter="onEnter"
       />
     </div>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations, Store } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import { search, searchHot, getMusicDetail } from 'api'
 import formatSongs from '@/utils/song'
 import MmLoading from 'base/mm-loading/mm-loading'
@@ -35,13 +35,13 @@ import MusicList from 'components/music-list/music-list'
 import { loadMixin } from '@/utils/mixin'
 import MmDialog from 'base/mm-dialog/mm-dialog'
 export default {
-  name: 'search',
-  mixins: [loadMixin],
+  name: "search",
   components: {
     MmLoading,
     MusicList,
     MmDialog
   },
+  mixins: [loadMixin],
   data() {
     return {
       Artists: [], //热搜数组
