@@ -404,7 +404,7 @@ export default {
   },
   created() {
     // const wsuri = "ws://127.0.0.1:12345/" + this.uid; //这个地址由后端童鞋提供
-    const wsuri = 'ws://129.204.108.71:12345/' + this.uid //这个地址由后端童鞋提供
+    const wsuri = 'ws://h.wangkunlun.win:53311/' + this.uid //这个地址由后端童鞋提供
 
     var self = this
     this.websock = new WebSocket(wsuri)
