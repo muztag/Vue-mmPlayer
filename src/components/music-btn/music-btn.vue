@@ -21,7 +21,6 @@
           type="number"
           value="2178530"
           autofocus
-          
           @keyup.enter="submit"
         />
         <p v-show="uid">
