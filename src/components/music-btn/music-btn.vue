@@ -20,7 +20,7 @@
           v-show="!showInput"
           type="number"
           autofocus
-          placeholder="2178530"
+          placeholder="请输入对方ID"
           v-model.trim="dest"
           @keyup.enter="submit"
         />
