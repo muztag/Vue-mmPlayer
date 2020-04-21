@@ -48,7 +48,7 @@ import {
 } from '@/utils/storage.js'
 import { mapGetters, mapActions } from 'vuex'
 export default {
-  name: 'Music-Btn',
+  name: 'music-btn',
   data() {
     return {
       user: this.uid,
