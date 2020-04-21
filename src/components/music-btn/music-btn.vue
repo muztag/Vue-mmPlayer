@@ -30,7 +30,7 @@
         <p v-if="uid">开启之后,对方输入您的的编号即可自动同步您的进度.</p>
         <p v-else>您必须先要登录才能开启房间,你现在只能同步其他人的房间.</p>
         <p v-if="uid" v-text="'您当前的编号为:'"></p>
-        <p v-if="uid" v-text="{uid}"></p>
+        <p v-if="uid" v-text="{ uid }"></p>
       </div>
       <div slot="btn" @click="openDialog(1)">帮助</div>
     </mm-dialog>
